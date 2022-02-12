@@ -11,6 +11,17 @@ function run(args) {
 
   chrome.windows[windowIndex].visible = true;
   chrome.windows[windowIndex].activeTabIndex = tabIndex + 1;
+  let windowTitle = chrome.windows[windowIndex].title();
   chrome.windows[windowIndex].index = 1;
   chrome.activate();
+
+  let candidateWindows = Array.prototype.filter.call(
+    Application("System Events").processes[browser].windows,
+    function(w) {
+      return w.name().startsWith(windowTitle + ' - ');
+    },
+  );
+  if (candidateWindows.length == 1) {
+    candidateWindows[0].actions['AXRaise'].perform();
+  }
 }
